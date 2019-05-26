@@ -1,18 +1,19 @@
 from PIL import Image
 import numpy as np
 import math
+import os
 
 #MAIN CONST
-N = 800
-M = 600
-REL = 100
+N = 1600
+M = 900
+REL = 20
 
 #Image size
 ImgSize = (N, M)
 
 #Check points
 PeacesX = int(N / REL)
-PeacesY = int (M / (REL * M / N))
+PeacesY = int (M / REL)
 SizeX = int (N / PeacesX)
 SizeY = int (M / PeacesY)
 Elem = SizeX * SizeY
@@ -41,7 +42,7 @@ def Check(x):
     if (x >= -50) & (x < -2): return -1
     if (x <= 50) & (x > 2): return 1
     if x > 50: return 2
-    if x < 50: return -2
+    if x < -50: return -2
 
 def ArrayDif(arr):
     n = PeacesX
@@ -72,9 +73,9 @@ def ArrayDif(arr):
             new_arr[i+1][j-1] = Check(new_arr[i+1][j-1])
             new_arr[i+1][j+1] = Check(new_arr[i+1][j+1])
 
-    # for i in range(3, m*3+3, 3):
-    #     for j in range(3, n*3+3, 3):
-    #         new_arr[i][j] = 0
+    for i in range(3, m*3+3, 3):
+        for j in range(3, n*3+3, 3):
+            new_arr[i][j] = 0
 
     return(new_arr[3:m*3+1, 3:n*3+1])
 
@@ -97,6 +98,7 @@ def Complete(str):
     new_arr = ArrayAverage(arr)
     comp_arr = ArrayDif(new_arr)
     # img.show()
+    # Image.fromarray(new_arr).show()
     # print(new_arr)
     # print(new_arr.shape)
     # print(arr)
@@ -109,4 +111,16 @@ def Complete(str):
 
 
 d = Dif(Complete('4.jpg'), Complete('4_similar.jpg'))
+path = '.'
+
+# for i in os.listdir(path):
+#     for j in os.listdir(path):
+#         if i.endswith('.jpg') & j.endswith('.jpg'):
+#             if Dif(Complete(i), Complete(j)) < 0.3:
+#                 print ('{} {}'.format(i, j))
+
+
+
+
+
 print (d)
