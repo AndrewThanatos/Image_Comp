@@ -6,7 +6,7 @@ import os
 #MAIN CONST
 N = 900
 M = 900
-REL = 40
+REL = 150
 
 #Image size
 ImgSize = (N, M)
@@ -166,15 +166,19 @@ def Complete(image_name):
 
 
 
-d = Dif(Complete('15_modification.jpg'), Complete('15.jpg'))
+d = Dif(Complete('images (1).jpeg'), Complete('download (2).jpeg'))
 path = '.'
 
 
-# for i in os.listdir(path):
-#     for j in os.listdir(path):
-#         if i.endswith('.jpg') & j.endswith('.jpg'):
-#             if Dif(Complete(i), Complete(j)) < 0.3:
-#                 print ('{} {}'.format(i, j))
+k = 1
+for i in os.listdir(path):
+    for j in os.listdir(path)[k:]:
+        if (i.endswith('.jpg') or i.endswith('.jpeg')) and (j.endswith('.jpg') or j.endswith('.jpeg')):
+            if Dif(Complete(i), Complete(j)) < 0.3:
+                print ('{} {}'.format(i, j))
+                # print(Dif(Complete(i), Complete(j)))
+                
+    k += 1
 
 
 print(d)
