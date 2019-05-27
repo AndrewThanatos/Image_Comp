@@ -4,28 +4,80 @@ import math
 import os
 
 #MAIN CONST
-N = 1600
+N = 900
 M = 900
-REL = 20
+REL = 40
 
 #Image size
 ImgSize = (N, M)
 
 #Check points
 PeacesX = int(N / REL)
-PeacesY = int (M / REL)
+PeacesY = PeacesX
 SizeX = int (N / PeacesX)
 SizeY = int (M / PeacesY)
 Elem = SizeX * SizeY
 
 
+def preprocess_image(image_name) :
+    '''
+        Load img_array and change it to Black-and-White
+    '''
 
-#Make image normal
-def ImgNormalization(str) :
-    return Image.open(str).convert('L').resize(ImgSize)
+    return Image.open(image_name).convert('L').resize(ImgSize)
 
-def ImgToArray(img):
+
+def img_to_array(img):
+    '''
+        Change image to numpy 2d array
+    '''
+
     return np.array(img)
+
+
+def crop_image(img_array, lower_percentile=5, upper_percentile=95, fix_ratio=False):
+    """
+        Crops an img_array, removing featureless border regions.
+    """
+    # row-wise differences
+    rw = np.cumsum(np.sum(np.abs(np.diff(img_array, axis=1)), axis=1))
+    # column-wise differences
+    cw = np.cumsum(np.sum(np.abs(np.diff(img_array, axis=0)), axis=0))
+
+    # compute percentiles
+    upper_column_limit = np.searchsorted(cw,
+                                            np.percentile(cw, upper_percentile),
+                                            side='left')
+    lower_column_limit = np.searchsorted(cw,
+                                            np.percentile(cw, lower_percentile),
+                                            side='right')
+    upper_row_limit = np.searchsorted(rw,
+                                        np.percentile(rw, upper_percentile),
+                                        side='left')
+    lower_row_limit = np.searchsorted(rw,
+                                        np.percentile(rw, lower_percentile),
+                                        side='right')
+
+    # if img_array is nearly featureless, use default region
+    if lower_row_limit > upper_row_limit:
+        lower_row_limit = int(lower_percentile/100.*img_array.shape[0])
+        upper_row_limit = int(upper_percentile/100.*img_array.shape[0])
+    if lower_column_limit > upper_column_limit:
+        lower_column_limit = int(lower_percentile/100.*img_array.shape[1])
+        upper_column_limit = int(upper_percentile/100.*img_array.shape[1])
+
+    # if fix_ratio, return both limits as the larger range
+    if fix_ratio:
+        if (upper_row_limit - lower_row_limit) > (upper_column_limit - lower_column_limit):
+            lower_column_limit = lower_row_limit
+            upper_column_limit = upper_row_limit
+        else:
+            lower_row_limit = lower_column_limit
+            upper_row_limit = upper_column_limit
+
+    # otherwise, proceed as normal
+    return img_array[lower_row_limit:upper_row_limit, lower_column_limit:upper_column_limit]
+
 
 def ArrayAverage(arr):
     n = PeacesX
@@ -35,7 +87,8 @@ def ArrayAverage(arr):
         for j in range(n):
             new_arr[i][j] = arr[i*SizeX:(i+1)*SizeX, j*SizeY:(j+1)*SizeY].sum() / Elem
             
-    return np.array(new_arr)
+    return np.array(new_arr)   
+
 
 def Check(x):
     if (x >= -2) & (x <= 2): return 0
@@ -92,11 +145,14 @@ def Dif(arr1, arr2):
     return  all_sum / (first_sum + second_sum)
 
         
-def Complete(str):
-    img = ImgNormalization(str)
-    arr = ImgToArray(img)
+def Complete(image_name):
+    img = preprocess_image(image_name)
+    arr = img_to_array(img)
+    arr = crop_image(arr)
     new_arr = ArrayAverage(arr)
     comp_arr = ArrayDif(new_arr)
+    #print(Fn.detect(np.array(Image.open('4.jpg'))))
+    #Image.fromarray(crop_image(arr)).show()
     # img.show()
     # Image.fromarray(new_arr).show()
     # print(new_arr)
@@ -110,8 +166,9 @@ def Complete(str):
 
 
 
-d = Dif(Complete('4.jpg'), Complete('4_similar.jpg'))
+d = Dif(Complete('15_modification.jpg'), Complete('15.jpg'))
 path = '.'
+
 
 # for i in os.listdir(path):
 #     for j in os.listdir(path):
@@ -120,7 +177,4 @@ path = '.'
 #                 print ('{} {}'.format(i, j))
 
 
-
-
-
-print (d)
+print(d)
