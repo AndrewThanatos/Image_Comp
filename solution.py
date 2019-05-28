@@ -265,7 +265,7 @@ def main(argv):
     for i in os.listdir(path):
         for j in os.listdir(path)[k:]:
             if (i.endswith('.jpg') or i.endswith('.jpeg')) and (j.endswith('.jpg') or j.endswith('.jpeg')):
-                if mean_error(Complete(path + i), Complete(path + j)) < 0.3:
+                if mean_error(Complete(i), Complete(j)) < 0.3:
                     print ('{} {}'.format(i, j))
                     # if i[4:12] == j[4:12]: print(' --- True')
                     # else: print(' --- False')
