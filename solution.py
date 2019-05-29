@@ -14,13 +14,14 @@ import time
 N = 900
 M = 900
 REL = 150
+SIM_INDEX = 0.3
 
 
 #Image size
 ImgSize = (N, M)
 
 
-#check points
+#Small Image Arguments
 PeacesX = int(N / REL)
 PeacesY = PeacesX
 SizeX = int (N / PeacesX)
@@ -217,6 +218,7 @@ def Complete(image_name):
     new_arr = mean_array(arr)
     comp_arr = normalize_and_threshold(new_arr)
 
+
     #print(Fn.detect(np.array(Image.open('4.jpg'))))
     #Image.fromarray(crop_image(arr)).show()
     # img.show()
@@ -265,11 +267,11 @@ def main(argv):
     for i in os.listdir(path):
         for j in os.listdir(path)[k:]:
             if (i.endswith('.jpg') or i.endswith('.jpeg')) and (j.endswith('.jpg') or j.endswith('.jpeg')):
-                if mean_error(Complete(i), Complete(j)) < 0.3:
+                # print(mean_error(Complete(i), Complete(j)))
+                if mean_error(Complete(path + i), Complete(path + j)) < SIM_INDEX:
                     print ('{} {}'.format(i, j))
                     # if i[4:12] == j[4:12]: print(' --- True')
                     # else: print(' --- False')
-                    # print(mean_error(Complete(i), Complete(j)))
                     
         k += 1
 
