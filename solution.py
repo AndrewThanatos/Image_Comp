@@ -197,11 +197,6 @@ def mean_error(arr1, arr2):
     first_sum = math.sqrt((arr1*arr1).sum())
     second_sum = math.sqrt((arr2*arr2).sum())
 
-    # print('-------------')
-    # print(all_sum)
-    # print(first_sum)
-    # print(second_sum)
-
     return  all_sum / (first_sum + second_sum)
 
         
@@ -257,9 +252,6 @@ optional arguments:
 
 
 def main(argv):
-
-    # d = mean_error(Complete('4_similar.jpg'), Complete('4.jpg'))
-    # print(d)
     path = input_check(argv)
     if path == None:
         return
@@ -271,12 +263,8 @@ def main(argv):
     for i in os.listdir(path):
         for j in os.listdir(path)[k:]:
             if (i.endswith('.jpg') or i.endswith('.jpeg')) and (j.endswith('.jpg') or j.endswith('.jpeg')):
-                print(mean_error(Complete(i), Complete(j)))
                 if mean_error(Complete(path + i), Complete(path + j)) < SIM_INDEX:
                     print ('{} {}'.format(i, j))
-                    # if i[4:12] == j[4:12]: print(' --- True')
-                    # else: print(' --- False')
-                    
         k += 1
 
 if __name__ == "__main__":
