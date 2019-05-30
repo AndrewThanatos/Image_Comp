@@ -263,11 +263,15 @@ def main(argv):
     path = input_check(argv)
     if path == None:
         return
+
+    if path[-1]  != '/':
+        path += '/'
+
     k = 1
     for i in os.listdir(path):
         for j in os.listdir(path)[k:]:
             if (i.endswith('.jpg') or i.endswith('.jpeg')) and (j.endswith('.jpg') or j.endswith('.jpeg')):
-                # print(mean_error(Complete(i), Complete(j)))
+                print(mean_error(Complete(i), Complete(j)))
                 if mean_error(Complete(path + i), Complete(path + j)) < SIM_INDEX:
                     print ('{} {}'.format(i, j))
                     # if i[4:12] == j[4:12]: print(' --- True')
